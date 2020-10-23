@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes</title>
+</head>
+<body onload="listarCategorias(); listarNomes(); listarAnos()">
+    
+    <form id="form">
+        <input type="text" id="nome" placeholder="Nome do filme" required>
+        <input type="text" id="categoria" placeholder="Categoria" required>
+        <input type="text" id="ano" placeholder="Ano de lançamento" required>
+
+        <button type="button" id="btnCadastrar">Cadastrar</button>
+        <button type="button" id="btnRemover">Remover</button>
+
+        <!--
+        <table>
+            <caption>Filmes</caption>
+            <thead>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    Categoria
+                </th>
+                <th>
+                    Ano Lançamento
+                </th>
+            </thead>
+            <tbody id="tabela-lista-corpo"></tbody>
+        </table>
+        -->
+    </form>
+
+</body>
+<script>
+    let url = "https://5f9316568742070016da6585.mockapi.io/api/categorias";
+    let urlN = "https://5f9316568742070016da6585.mockapi.io/api/nomes";
+    let urlA = "https://5f9316568742070016da6585.mockapi.io/api/anos";
+
+    let categoria = document.querySelector("#categoria");
+    let categorias = [];
+
+    let nome = document.querySelector("#nome");
+    let nomes = [];
+
+    let ano = document.querySelector("#ano");
+    let anos = [];
+
+    let btnCadastrar = document.querySelector("#btnCadastrar");
+    let btnRemover = document.querySelector("#btnRemover");
+    
+    //#region LISTAR
+    //Categorias
+    function listarCategorias() {
+        let xhrGet = new XMLHttpRequest();
+        xhrGet.onload = listarSucesso;
+        xhrGet.onerror = listarErro;
+        xhrGet.open("GET", url);
+        xhrGet.send();
+    }
+
+    //Nomes
+    function  listarNomes() {
+        let xhrGet = new XMLHttpRequest();
+        xhrGet.onload = listarSucesso;
+        xhrGet.onerror = listarErro;
+        xhrGet.open("GET", urlN);
+        xhrGet.send();
+    }
+
+    //Anos
+    function  listarAnos() {
+        let xhrGet = new XMLHttpRequest();
+        xhrGet.onload = listarSucesso;
+        xhrGet.onerror = listarErro;
+        xhrGet.open("GET", urlA);
+        xhrGet.send();
+    }
+
+    //Status
+    function listarSucesso() {
+        console.log("Sucesso!");
+        const data = this.responseText;
+        console.log(JSON.parse(data));
+    }
+
+    function listarErro(err) {
+        console.error("Erro!"+err);
+    }
+    //#endregion
+
+    //#region CADASTRAR
+    //Categorias
+    btnCadastrar.addEventListener("click", function cadastrarCategoria() {
+        event.preventDefault();
+
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastrarSucesso;
+        xhrPost.onerror = cadastrarErro;
+
+        xhrPost.open("POST", url);
+        xhrPost.setRequestHeader("content-type", "application/json");
+
+        let params = {
+            name : categoria.value,
+        }
+
+        xhrPost.send(JSON.stringify(params));  
+    });
+
+    //Nomes
+    btnCadastrar.addEventListener("click", function cadastrarNome(){
+        event.preventDefault();
+
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastrarSucesso;
+        xhrPost.onerror = cadastrarErro;
+
+        xhrPost.open("POST", urlN);
+        xhrPost.setRequestHeader("content-type", "application/json");
+
+        let params = {
+            name : nome.value,
+        }
+
+        xhrPost.send(JSON.stringify(params));
+    });
+
+    //Anos
+    btnCadastrar.addEventListener("click", function cadastrarAno(){
+        event.preventDefault();
+
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastrarSucesso;
+        xhrPost.onerror = cadastrarErro;
+
+        xhrPost.open("POST", urlA);
+        xhrPost.setRequestHeader("content-type", "application/json");
+
+        let params = {
+            name : ano.value,
+        }
+
+        xhrPost.send(JSON.stringify(params));
+    });
+
+    //Status
+    function cadastrarSucesso() {
+        console.log("Cadastro efetuado!");
+        console.log(this.status);
+        console.log(JSON.parse(this.responseText));
+    }
+
+    function cadastrarErro(err) {
+        console.error("Erro!"+err);
+    }
+    //#endregion
+
+    //#region REMOVER
+    //Categorias
+    btnRemover.addEventListener("click", function removerCategoria() {
+        let xhrDelete = new XMLHttpRequest();
+        xhrDelete.onload = removerSucesso;
+        xhrDelete.onerror = removerErro;
+        xhrDelete.open("DELETE", url + "/" + categoria.value);
+        xhrDelete.send();
+    });
+
+    //Nomes
+    btnRemover.addEventListener("click", function removerNome() {
+        let xhrDelete = new XMLHttpRequest();
+        xhrDelete.onload = removerSucesso;
+        xhrDelete.onerror = removerErro;
+        xhrDelete.open("DELETE", urlN + "/" + nome.value);
+        xhrDelete.send();
+    });
+
+    //Anos
+    btnRemover.addEventListener("click", function removerAno() {
+        let xhrDelete = new XMLHttpRequest();
+        xhrDelete.onload = removerSucesso;
+        xhrDelete.onerror = removerErro;
+        xhrDelete.open("DELETE", urlA + "/" + ano.value);
+        xhrDelete.send();
+    });
+
+    //Status
+    function removerSucesso() {
+        console.log("Item deletado!");
+        console.log(this.status);
+        console.log(JSON.parse(this.responseText));
+    }
+
+    function removerErro(err) {
+        console.log("Erro!"+err);
+    }
+    //#endregion            
+</script>
+</html>
